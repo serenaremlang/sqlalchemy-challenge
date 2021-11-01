@@ -55,8 +55,8 @@ def home():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/start_date/<start_date><br/>"
+        f"/api/v1.0/start_date/<start_date>/end_date/<end_date><br/>"
     )
 
 @app.route('/api/v1.0/precipitation')
@@ -89,8 +89,8 @@ def stations ():
     session = Session(engine)
 
     # Query date and prcp information
-    station_query = session.query(Measurement.station).\
-    group_by(Measurement.station).all()
+    station_query = session.query(Station.name).\
+    group_by(Station.station).all()
 
     session.close()
     
@@ -116,18 +116,18 @@ def tobs ():
 
     return jsonify(temp_list)
 
-@app.route('/api/v1.0/<start>')
-def start(start):
+@app.route('/api/v1.0/start_date/<start_date>')
+def start(start_date):
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
     # Query date and prcp information
-    start_date = dt.datetime.strptime(start, "%Y-%m-%d")
+    start_date_clean = dt.datetime.strptime(start_date, "%Y-%m-%d")
 
     tmin_tavg_tmax = session.query(func.min(Measurement.tobs),\
      func.avg(Measurement.tobs),\
      func.max(Measurement.tobs)).\
-    filter(Measurement.date <= start_date).all()
+    filter(Measurement.date <= start_date_clean).all()
 
     tmin_tavg_tmax_list = [i for i in tmin_tavg_tmax[0]]
 
@@ -135,20 +135,20 @@ def start(start):
 
     return jsonify(tmin_tavg_tmax_list)
 
-@app.route('/api/v1.0/<start>/<end>')
-def start(start,end):
+@app.route('/api/v1.0/start_date/<start_date>/end_date/<end_date>')
+def start_end(start_date, end_date):
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
     # Query date and prcp information
-    start_date = dt.datetime.strptime(start, "%Y-%m-%d")
-    end_date = dt.datetime.strptime(end, "%Y-%m-%d")
+    start_date_clean = dt.datetime.strptime(start_date, "%Y-%m-%d")
+    end_date_clean = dt.datetime.strptime(end_date, "%Y-%m-%d")
 
     tmin_tavg_tmax = session.query(func.min(Measurement.tobs),\
      func.avg(Measurement.tobs),\
      func.max(Measurement.tobs)).\
-    filter(Measurement.date <= start_date).\
-    filter(Measurement.date >= end_date).all()
+    filter(Measurement.date <= start_date_clean).\
+    filter(Measurement.date >= end_date_clean).all()
 
     tmin_tavg_tmax_list = [i for i in tmin_tavg_tmax[0]]
 
