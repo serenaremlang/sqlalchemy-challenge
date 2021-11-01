@@ -75,7 +75,6 @@ def precipitation():
     date_list = []
     prcp_list = []
 
-
     for line in prcp_scores_query:
         date_list.append(line[0])
         prcp_list.append(line[1])
@@ -96,9 +95,7 @@ def stations ():
     session.close()
     
     # Create list of stations
-    station_list = []
-    for station in station_query:
-        station_list.append(station[0])
+    station_list = [station[0] for station in station_query]
 
     return jsonify(station_list)
 
@@ -115,9 +112,7 @@ def tobs ():
     session.close()
     
     # Create list of temperature
-    temp_list = []
-    for temp in most_active_last_12:
-        temp_list.append(temp[1])
+    temp_list = [temp[1] for temp in most_active_last_12]
 
     return jsonify(temp_list)
 
