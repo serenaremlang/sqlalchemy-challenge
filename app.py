@@ -82,7 +82,7 @@ def precipitation():
 
     precipitation_dict = dict(zip(date_list,prcp_list))
 
-    return jsonify(precipitaiton_dict)
+    return jsonify(precipitation_dict)
 
 @app.route('/api/v1.0/stations')
 def stations ():
